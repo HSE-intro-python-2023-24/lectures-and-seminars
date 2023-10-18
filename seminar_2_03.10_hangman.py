@@ -64,11 +64,11 @@ def print_introduction():
     print("Если надоело играть, введи одно из стоп слов: {}".format(','.join(EXIT_WORDS)))
 
 
-def get_input(guessed_letters):
+def get_input(guessed_letters, missed_letters):
     "Получить инпут от юзера и проверить корректность. + стоп слова"    
     not_correct = True
     while not_correct:
-        letter = input('Введи букву: ')
+        letter = input('Введи букву: ').lower()
         if not letter.isalpha():
             print('Надо ввести именно букву или стоп-слово!')
             continue
@@ -79,14 +79,33 @@ def get_input(guessed_letters):
             else:
                 print('Надо ввести только одну букву!')
                 continue
+        elif (letter in guessed_letters) or (letter in missed_letters):
+            print('Вы уже вводили эту букву и она верная. Введите другую: ')
+            continue
         else:
             not_correct = False
             return letter
             
 
-def display_board(missed_letters, correct_letters, word):
-    "Проверить букву в слове и вывести текущее состояние игры."
-    # TODO
+def is_in_word(word, letter, guessed_letters, missed_letters):
+    "Проверить букву в слове."
+    if letter in word:
+        guessed_letters.append(letter)
+    else:
+        missed_letters.append(letter)
+
+
+def display_board(missed_letters, guessed_letters, word):
+    "Вывести текущее состояние игры."
+    num_letters = len(word)
+    word_string = ['_'] * num_letters
+    for lt_1 in guessed_letters:
+        if lt_1 in word:
+            idx = []
+            for i, lt_2 in enumerate(word): 
+                if lt_2 == lt_1:
+                    word_string[i] = lt_1
+        print(word_string)
 
 
 def play_again():
@@ -105,12 +124,18 @@ def main():
     # Спросить, хочет ли еще
     
     print_introduction()
-    word = get_random_word()
+    word = 'защита' #get_random_word()
 
     # Сюда складываем буквы, которые пользователь угадал
     guessed_letters = []
-    letter = get_input(guessed_letters)
+    missed_letters = []
+    letter = get_input(guessed_letters, missed_letters)
+    
+    is_in_word(word, letter, guessed_letters, missed_letters)
+    
+    display_board(missed_letters, guessed_letters, word)
 
 
 if __name__ == "__main__":
     main()
+
