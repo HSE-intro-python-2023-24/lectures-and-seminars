@@ -87,9 +87,9 @@ def get_input(guessed_letters, missed_letters):
             return letter
             
 
-def is_in_word(word, letter, guessed_letters, missed_letters):
+def is_in_word(word_list, letter, guessed_letters, missed_letters):
     "Проверить букву в слове."
-    if letter in word:
+    if letter in word_list:
         guessed_letters.append(letter)
     else:
         missed_letters.append(letter)
@@ -105,13 +105,18 @@ def display_board(missed_letters, guessed_letters, word):
             for i, lt_2 in enumerate(word): 
                 if lt_2 == lt_1:
                     word_string[i] = lt_1
-        print(word_string)
+    
+    print(HANGMAN_PICS[len(missed_letters)])
+    current_string = ' '.join(word_string)
+    print(current_string)
+    print('Уже введенные неправильные буквы: ', ', '.join(missed_letters))
+    print('Осталось {} попыток\n\n'.format(6 - len(missed_letters)))
 
 
 def play_again():
     "Спросить, продолжаем ли игру, и вернуть ответ. "
     # TODO
-
+    return input('Если хочешь начать новую игру, напиши "да": ')
 
 def main():
     "Общая логика работы."
@@ -124,17 +129,45 @@ def main():
     # Спросить, хочет ли еще
     
     print_introduction()
-    word = 'защита' #get_random_word()
+    word = get_random_word()
+    word_list = list(word)
 
     # Сюда складываем буквы, которые пользователь угадал
     guessed_letters = []
     missed_letters = []
-    letter = get_input(guessed_letters, missed_letters)
     
-    is_in_word(word, letter, guessed_letters, missed_letters)
+    while True:
     
-    display_board(missed_letters, guessed_letters, word)
-
+        letter = get_input(guessed_letters, missed_letters)
+        is_in_word(word_list, letter, guessed_letters, missed_letters)
+        display_board(missed_letters, guessed_letters, word)
+        
+        word_list = [w for w in word_list if w not in guessed_letters]
+        
+        if len(missed_letters) > 5: 
+            print('Ты проиграл')
+            print('Загаданное слово: {}\n'.format(word))
+            answer = play_again()
+            if answer == 'да':
+                print('Поехали!\n')
+                word = get_random_word()
+                word_list = list(word)
+                guessed_letters = []
+                missed_letters = []
+            else:
+                break
+        if len(word_list) == 0:
+            print('Ты выиграл\n')
+            answer = play_again()
+            if answer == 'да':
+                print('Поехали!\n')
+                word = get_random_word()
+                word_list = list(word)
+                guessed_letters = []
+                missed_letters = []
+            else:
+                break
+            
 
 if __name__ == "__main__":
     main()
