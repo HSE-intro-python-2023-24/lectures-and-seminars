@@ -3,3 +3,7 @@
 /.venv
 /.env
 /requirements.txt
+/microblog/venv
+/microblog/env
+/microblog/.venv
+/microblog/.env
