@@ -1,37 +1,7 @@
 {% extends "base.html" %}
+{% import "bootstrap_form.html" as bf %}
 
 {% block content %}
     <h1>Register</h1>
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-    <p>
-        {{ form.username.label }}<br>
-        {{ form.username() }}<br>
-        {% for error in form.username.errors %}
-        <span style="color: red;">{{ error }}</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.email.label }}<br>
-        {{ form.email() }}<br>
-        {% for error in form.email.errors %}
-        <span style="color: red;">{{ error }}</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.password.label }}<br>
-        {{ form.password() }}
-        {% for error in form.password.errors %}
-        <span style="color: red;">{{ error }}</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.password2.label }}<br>
-        {{ form.password2() }}
-        {% for error in form.password2.errors %}
-        <span style="color: red;">{{ error }}</span>
-        {% endfor %}
-    </p>
-    <p>{{ form.submit() }}</p>
-    </form>
+    {{ bf.quick_form(form) }}
 {% endblock %}

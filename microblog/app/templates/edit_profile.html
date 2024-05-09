@@ -1,23 +1,7 @@
 {% extends "base.html" %}
+{% import "bootstrap_form.html" as bf %}
 
 {% block content %}
     <h1>Edit Profile</h1>
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-    <p>
-        {{ form.username.label }}<br>
-        {{ form.username() }}<br>
-        {% for error in form.username.errors %}
-        <span style="color: red;">{{ error }}</span>
-        {% endfor %}
-    </p>
-    <p>
-        {{ form.about_me.label }}<br>
-        {{ form.about_me() }}<br>
-        {% for error in form.about_me.errors %}
-        <span style="color: red;">{{ error }}</span>
-        {% endfor %}
-    </p>
-    <p>{{ form.submit() }}</p>
-    </form>
+    {{ bf.quick_form(form) }}
 {% endblock %}
