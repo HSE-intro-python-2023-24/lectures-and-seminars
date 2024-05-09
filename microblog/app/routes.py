@@ -36,15 +36,13 @@ def login():
         user = db.session.scalar(sa.select(User).where(User.username == form.username.data))
         if user is None:
             flash('Пользователя с таким юзернеймом не существует')
-            rd = redirect(url_for('login'))
+            return redirect(url_for('login'))
         if not user.check_password(form.password.data):
             flash('Неверный пароль')
-            rd = redirect(url_for('login'))
+            return redirect(url_for('login'))
         
         login_user(user, remember=form.remember_me.data)
-        rd = redirect(url_for('index'))
-
-        return rd
+        return redirect(url_for('index'))
     
     return render_template('login.html', title='Sign In', form=form)
 
@@ -82,7 +80,7 @@ def user(username):
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
     form = EditProfileForm()
-    if form.validate_on_submit():
+    if form.validate_on_submit(current_user.username):
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
