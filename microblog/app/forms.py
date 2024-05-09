@@ -7,31 +7,31 @@ from app.models import User
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me')
-    submit = SubmitField('Sign In')
+    username = StringField('Юзернейм', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    remember_me = BooleanField('Запомнить меня')
+    submit = SubmitField('Войти')
     
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    password2 = PasswordField('Repeat password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Register')
+    username = StringField('Юзернейм', validators=[DataRequired()])
+    email = StringField('Имейл', validators=[DataRequired(), Email()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    password2 = PasswordField('Повторите пароль', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Зарегистрироваться')
     
     def validate_username(self, username):
         user = db.session.scalar(sa.select(User).where(User.username == username.data))
         if user is not None:
-            raise ValidationError('Username already taken. Please choose another one.')
+            raise ValidationError('Такой юзернейм уже занят. Придумайте, пожалуйста, другой.')
         
     def validate_email(self, email):
         user = db.session.scalar(sa.select(User).where(User.email == email.data))
         if user is not None:
-            raise ValidationError('Email already taken. Please choose another one.')
+            raise ValidationError('Такой имейл уже занят. Укажите, пожалуйста, другой.')
         
 
 class EditProfileForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    about_me = TextAreaField('About me', validators=[Length(min=0, max=140)])
-    submit = SubmitField('Submit')
+    username = StringField('Юзернейм', validators=[DataRequired()])
+    about_me = TextAreaField('Обо мне', validators=[Length(min=0, max=140)])
+    submit = SubmitField('Сохранить')

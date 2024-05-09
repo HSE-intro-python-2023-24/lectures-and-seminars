@@ -2,7 +2,7 @@
 {% import "bootstrap_form.html" as bf %}
 
 {% block content %}
-    <h1>Sign In</h1>
+    <h1>Вход</h1>
     {{ bf.quick_form(form) }}
-    <p>New User? <a href="{{ url_for('register') }}">Click to Register!</a></p>
+    <p>Новенький? <a href="{{ url_for('register') }}">Зарегистрироваться</a></p>
 {% endblock %}

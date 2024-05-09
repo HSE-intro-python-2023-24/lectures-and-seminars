@@ -35,10 +35,10 @@ def login():
     if form.validate_on_submit():
         user = db.session.scalar(sa.select(User).where(User.username == form.username.data))
         if user is None:
-            flash('Invalid username')
+            flash('Пользователя с таким юзернеймом не существует')
             rd = redirect(url_for('login'))
         if not user.check_password(form.password.data):
-            flash('Invalid password')
+            flash('Неверный пароль')
             rd = redirect(url_for('login'))
         
         login_user(user, remember=form.remember_me.data)
@@ -64,7 +64,7 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash('Success! You are registered!')
+        flash('Поздравляем, вы зарегистирированы!')
 
         return redirect(url_for('login'))
     
@@ -86,8 +86,8 @@ def edit_profile():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
-        flash('Your changes have been saved')
-        return redirect(url_for('edit_profile'))
+        flash('Изменения сохранены')
+        return redirect(url_for('user', username = current_user.username))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
