@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 import logging
 from logging.handlers import RotatingFileHandler
+from flask_moment import Moment
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -17,6 +18,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
+
+moment = Moment(app)
 
 if not app.debug:
     if not os.path.exists('logs'):

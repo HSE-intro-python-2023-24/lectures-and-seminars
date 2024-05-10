@@ -27,6 +27,7 @@ class User(UserMixin, db.Model):
     password_hash: so.Mapped[str] = so.mapped_column(sa.String(120))
     about_me: so.Mapped[Optional[str]] = so.mapped_column(sa.String(140))
     last_seen: so.Mapped[Optional[datetime]] = so.mapped_column(default = lambda: datetime.now(timezone.utc))
+    posts: so.WriteOnlyMapped["Post"] = so.relationship(back_populates="author")
     following: so.WriteOnlyMapped['User'] = so.relationship(
         secondary=followers, primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
@@ -41,9 +42,7 @@ class User(UserMixin, db.Model):
         
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-    
-    posts: so.WriteOnlyMapped["Post"] = so.relationship(back_populates="author")
-    
+        
     def __repr__(self):
         return '<User {}>'.format(self.username)
     
