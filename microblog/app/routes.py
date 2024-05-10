@@ -5,7 +5,7 @@ import sqlalchemy as sa
 from app import app
 from app import db
 from app.models import User
-from app.forms import LoginForm, RegistrationForm, EditProfileForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm
 
 
 @app.before_request
@@ -71,11 +71,12 @@ def register():
 @app.route('/user/<username>')
 def user(username):
     user = db.first_or_404(sa.select(User).where(User.username==username))
+    form = EmptyForm()
     posts = [
         {'author': user, 'body': 'Test post #1'},
         {'author': user, 'body': 'Test post #2'}
     ]
-    return render_template('user.html', user=user, posts=posts)
+    return render_template('user.html', user=user, posts=posts, form=form)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
@@ -92,5 +93,42 @@ def edit_profile():
     return render_template('edit_profile.html', title='Edit Profile', form=form)
         
     
-        
+@app.route('/follow/<username>', methods=['POST'])
+def follow(username):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        user = db.session.scalar(
+            sa.select(User).where(User.username == username))
+        if user is None:
+            flash(f'Пользователь {username} не найден.')
+            return redirect(url_for('index'))
+        if user == current_user:
+            flash('На самого себя подписаться не получится :(')
+            return redirect(url_for('user', username=username))
+        current_user.follow(user)
+        db.session.commit()
+        flash(f'Вы теперь подписаны на {username}!')
+        return redirect(url_for('user', username=username))
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route('/unfollow/<username>', methods=['POST'])
+def unfollow(username):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        user = db.session.scalar(
+            sa.select(User).where(User.username == username))
+        if user is None:
+            flash(f'Пользователь {username} не найден.')
+            return redirect(url_for('index'))
+        if user == current_user:
+            flash('От самого себя отписаться не получится :(')
+            return redirect(url_for('user', username=username))
+        current_user.unfollow(user)
+        db.session.commit()
+        flash(f'Вы отписаны от {username}.')
+        return redirect(url_for('user', username=username))
+    else:
+        return redirect(url_for('index'))
     
