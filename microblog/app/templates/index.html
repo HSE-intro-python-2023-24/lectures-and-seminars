@@ -1,8 +1,12 @@
 {% extends "base.html" %}
+{% import "bootstrap_form.html" as bf %}
 
 {% block content %}
     <h1>Привет, {{ current_user.username }}!</h1>
+    {% if form %}
+    {{ bf.quick_form(form) }}
+    {% endif %}
     {% for post in posts %}
-    <p>{{ post.author.username }} написал(а): <b>{{ post.body }}</b></p>
+        {% include '_post.html' %}
     {% endfor %}
 {% endblock %}
