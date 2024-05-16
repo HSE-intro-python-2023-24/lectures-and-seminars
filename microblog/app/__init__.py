@@ -26,6 +26,9 @@ app.config['ELASTICSEARCH_URL'] = os.environ.get('ELASTICSEARCH_URL')
 
 app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
     if app.config['ELASTICSEARCH_URL'] else None
+    
+if 'post' not in app.elasticsearch.indices.get_alias(index="*").keys():
+    app.elasticsearch.indices.create(index='post')
 
 if not app.debug:
     if not os.path.exists('logs'):

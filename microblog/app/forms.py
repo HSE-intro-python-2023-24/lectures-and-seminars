@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask import request
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, EqualTo, Email, Length
 import sqlalchemy as sa
@@ -56,3 +57,14 @@ class PostForm(FlaskForm):
     post = TextAreaField('Напишите что-нибудь', validators=[
         DataRequired(), Length(min=1, max=140)])
     submit = SubmitField('Опубликовать')
+    
+
+class SearchForm(FlaskForm):
+    q = StringField(('Найти'), validators=[DataRequired()])
+
+    def __init__(self, *args, **kwargs):
+        if 'formdata' not in kwargs:
+            kwargs['formdata'] = request.args
+        if 'meta' not in kwargs:
+            kwargs['meta'] = {'csrf': False}
+        super(SearchForm, self).__init__(*args, **kwargs)

@@ -1,11 +1,12 @@
 from datetime import datetime, timezone
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, g, current_app
 from flask_login import current_user, login_user, logout_user
 import sqlalchemy as sa
 from app import app
 from app import db
 from app.models import User, Post
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm, PostForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm, PostForm, SearchForm
+from app.search import add_to_index
 
 
 @app.before_request
@@ -13,6 +14,11 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.now(timezone.utc)
         db.session.commit()
+        g.search_form = SearchForm()
+        
+        if app.elasticsearch.search(index='post', query={'match_all': {}})['hits']['total']['value'] == 0:
+            for post in db.session.scalars(sa.select(Post)):
+                add_to_index('post', post)
     
 
 @app.route('/', methods=['GET', 'POST'])
@@ -139,3 +145,10 @@ def explore():
     posts = db.session.scalars(query).all()
     return render_template('index.html', title='Explore', posts=posts)
 
+@app.route('/search')
+def search():
+    if not g.search_form.validate():
+        return redirect(url_for('index'))
+    posts, total = Post.search(g.search_form.q.data)
+
+    return render_template('search.html', title='Search', posts=posts, total=total)

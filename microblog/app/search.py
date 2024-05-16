@@ -21,4 +21,4 @@ def query_index(index, query):
     search = current_app.elasticsearch.search(index=index, 
                        query={'match': {'body': query}})
     ids = [int(hit['_id']) for hit in search['hits']['hits']]
-    return search #ids
+    return ids, search['hits']['total']['value']
