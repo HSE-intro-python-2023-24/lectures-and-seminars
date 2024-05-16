@@ -7,3 +7,4 @@
 /microblog/env
 /microblog/.venv
 /microblog/.env
+/microblog/app/__pycache__

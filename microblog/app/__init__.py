@@ -5,6 +5,7 @@ from flask_login import LoginManager
 import logging
 from logging.handlers import RotatingFileHandler
 from flask_moment import Moment
+from elasticsearch import Elasticsearch
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -20,6 +21,11 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 
 moment = Moment(app)
+
+app.config['ELASTICSEARCH_URL'] = os.environ.get('ELASTICSEARCH_URL')
+
+app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) \
+    if app.config['ELASTICSEARCH_URL'] else None
 
 if not app.debug:
     if not os.path.exists('logs'):

@@ -75,15 +75,14 @@ def register():
 def user(username):
     user = db.first_or_404(sa.select(User).where(User.username==username))
     form = EmptyForm()
-    query = user.posts.select()
-    #sa.select(Post).order_by(Post.timestamp.desc())
+    query = user.posts.select().order_by(Post.timestamp.desc())
     posts = db.session.scalars(query).all()
     return render_template('user.html', user=user, posts=posts, form=form)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
-    form = EditProfileForm()
-    if form.validate_on_submit(current_user.username):
+    form = EditProfileForm(current_user.username)
+    if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
@@ -139,4 +138,4 @@ def explore():
     query = sa.select(Post).order_by(Post.timestamp.desc())
     posts = db.session.scalars(query).all()
     return render_template('index.html', title='Explore', posts=posts)
-    
+
